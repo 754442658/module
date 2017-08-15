@@ -50,6 +50,7 @@ public abstract class BaseActivity extends AppCompatActivity implements OnClickL
         super.onCreate(savedInstanceState);
         super.setContentView(R.layout.title);
         try {
+
             addActivity();
             initTitle();
 //            findView();
@@ -225,7 +226,7 @@ public abstract class BaseActivity extends AppCompatActivity implements OnClickL
 
     public void addActivity() {
         try {
-            TApplication.context.addActivity(this);
+            OrangeRetrofit.addActivity(this);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -233,7 +234,7 @@ public abstract class BaseActivity extends AppCompatActivity implements OnClickL
 
     public void removeActivity() {
         try {
-            TApplication.context.removeActivity(this);
+            OrangeRetrofit.removeActivity(this);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -367,7 +368,7 @@ public abstract class BaseActivity extends AppCompatActivity implements OnClickL
     public void backDown() {
         long time1 = System.currentTimeMillis();
         if (time1 - curTime <= 2000) {
-            TApplication.context.exit();
+            OrangeRetrofit.exit();
             super.onBackPressed();
         } else {
             curTime = time1;

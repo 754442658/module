@@ -9,7 +9,7 @@ import android.widget.LinearLayout;
 
 
 import com.module.R;
-import com.module.base.TApplication;
+import com.module.base.OrangeRetrofit;
 
 /**
  * Created by ShiShow_xk on 2017/7/24.
@@ -69,8 +69,8 @@ public class VerBinnerUtils {
             ll.setVisibility(View.GONE);
             return;
         }
-        animStart = AnimationUtils.loadAnimation(TApplication.context, R.anim.anim_binner_in_bottom);
-        animEnd = AnimationUtils.loadAnimation(TApplication.context, R.anim.anim_binner_out_top);
+        animStart = AnimationUtils.loadAnimation(OrangeRetrofit.context, R.anim.anim_binner_in_bottom);
+        animEnd = AnimationUtils.loadAnimation(OrangeRetrofit.context, R.anim.anim_binner_out_top);
         setForeShowListValue(callBack);
     }
 

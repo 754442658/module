@@ -2,27 +2,25 @@ package com.module.base;
 
 import android.app.Activity;
 import android.app.Application;
+import android.content.Context;
 
 import com.lzy.okhttputils.OkHttpUtils;
+import com.module.utils.L;
 
 import java.util.ArrayList;
 
 /**
- * Created by ShiShow_xk on 2017/7/11.
+ * Created by ShiShow_xk on 2017/8/15.
  */
-public class TApplication extends Application {
-    private ArrayList<Activity> activityList = new ArrayList<Activity>();
-    public static TApplication context;
 
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        try {
-            context = this;
-            // 初始化Okhttps
-            OkHttpUtils.init(this);
-        } catch (Exception e) {
-            e.printStackTrace();
+public class OrangeRetrofit {
+    public static Application context;
+    private static ArrayList<Activity> activityList = new ArrayList<Activity>();
+
+    public static void init(Application context) {
+        if (null != context) {
+            OrangeRetrofit.context = context;
+            OkHttpUtils.init(context);
         }
     }
 
@@ -31,21 +29,21 @@ public class TApplication extends Application {
      *
      * @param activity
      */
-    public void addActivity(Activity activity) {
+    public static void addActivity(Activity activity) {
         activityList.add(activity);
     }
 
     /**
      * 移除某个adtivity
      */
-    public void removeActivity(Activity ac) {
+    public static void removeActivity(Activity ac) {
         activityList.remove(ac);
     }
 
     /**
      * 完全退出
      */
-    public void exit() {
+    public static void exit() {
         try {
             for (Activity activity : activityList) {
                 if (activity != null)
