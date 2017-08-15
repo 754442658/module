@@ -1,0 +1,171 @@
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.view.View;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import com.happy.view.XScrollView;
+import xk.module.base.BaseActivity;
+import xk.module.base.TApplication;
+import xk.module.utils.AppUtils;
+import xk.module.utils.T;
+import xk.module.view.MyListView;
+
+public class XScrollViewActivity extends BaseActivity implements XScrollView.IXScrollViewListener {
+
+    XScrollView xsl;
+    AdapterTest adapter;
+    List<String> list;
+    MyListView lv;
+
+    final int REFRESH = 0, LOAD = 1, PAGE_SIZE = 10;
+    // 当前数据页码
+    private int pageindex = -1;
+
+    private Handler handler = new Handler() {
+        public void handleMessage(Message msg) {
+            ArrayList<String> mList = (ArrayList<String>) msg.obj;
+            switch (msg.what) {
+                case REFRESH:
+                    // 因为是刷新操作，先把数据源清空一下，再把获取的数据集全部add到数据源
+                    xsl.stopRefresh();
+                    xsl.stopLoadMore();
+                    xsl.setRefreshTime(AppUtils.getTime());
+                    list.clear();
+                    xsl.setPullLoadEnable(true);
+                    if (mList != null) {
+                        list.addAll(mList);
+                    }
+                    adapter.notifyDataSetChanged();
+                    break;
+                case LOAD:
+                    xsl.stopRefresh();
+                    xsl.stopLoadMore();
+                    if (mList == null) {
+                        T.showShort(TApplication.context, "已加载全部");
+                        xsl.setPullLoadEnable(false);
+                    } else if (mList.size() < PAGE_SIZE) {
+                        list.addAll(mList);
+                        T.showShort(TApplication.context, "已加载全部");
+                        xsl.setPullLoadEnable(false);
+                        adapter.notifyDataSetChanged();
+                    } else {
+                        list.addAll(mList);
+                        adapter.notifyDataSetChanged();
+                    }
+                    break;
+                default:
+                    initData(REFRESH);
+                    break;
+            }
+        }
+
+        ;
+    };
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_xscroll_view);
+        try {
+            addActivity();
+            findView();
+            initView();
+            addListener();
+            initData(REFRESH);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void findView() {
+        xsl = findViewById(R.id.xsl);
+    }
+
+    private void initView() {
+        showTitleText(true);
+        setTitle("XScrollView");
+
+        // 是否开启刷新
+        xsl.setPullRefreshEnable(true);
+        // 是否开启加载更多
+        xsl.setPullLoadEnable(true);
+        // 是否开启滑到底部自动加载 XScrollView不能设置自动加载否则会出Bug
+        xsl.setAutoLoadEnable(false);
+        // 设置上下拉监听事件
+        xsl.setIXScrollViewListener(this);
+
+        View content = getLayoutInflater().inflate(R.layout.mylistview, null);
+        xsl.setView(content);
+        lv = content.findViewById(R.id.lv);
+        list = new ArrayList<>();
+        adapter = new AdapterTest(this, R.layout.item, list);
+        lv.setAdapter(adapter);
+    }
+
+    private void addListener() {
+        getLeft().setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
+    }
+
+    /**
+     * 刷新或者加载数据
+     *
+     * @param what
+     */
+    private void initData(int what) {
+        if (pageindex == -1 || what == REFRESH) {
+            pageindex = 1;
+        } else {
+            pageindex += 1;
+        }
+
+        ArrayList<String> list = new ArrayList<>();
+        list.add("江雪");
+        list.add("柳宗元");
+        list.add("千山鸟飞绝");
+        list.add("万径人踪灭");
+        list.add("孤舟蓑笠翁");
+        list.add("独钓寒江雪");
+        list.add("咏柳");
+        list.add("贺知章");
+        list.add("碧玉妆成一树高");
+        list.add("万条垂下绿丝绦");
+        list.add("不知细叶谁裁出");
+        list.add("二月春风似剪刀");
+        list.add("好湿好湿~");
+        final Message msg = new Message();
+        msg.what = what;
+        msg.obj = list;
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                handler.sendMessage(msg);
+            }
+        }, 3000);
+    }
+
+    /**
+     * 加载更多回调方法
+     */
+    @Override
+    public void onLoadMore() {
+        // 加载更多listview
+        initData(LOAD);
+    }
+
+    /**
+     * 刷新方法
+     */
+    @Override
+    public void onRefresh() {
+        // 刷新listview
+        initData(REFRESH);
+    }
+}

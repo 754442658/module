@@ -1,0 +1,27 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+          package="com.module">
+
+    <!-- sd卡写入权限 -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <!-- sd卡读取权限 -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <application android:allowBackup="true"
+                 android:label="@string/app_name"
+                 android:supportsRtl="true">
+        <!--&lt;!&ndash; 配置glideModule &ndash;&gt;-->
+        <!--<meta-data-->
+            <!--android:name="xk.mymodule.glide.MyGlideModule"-->
+            <!--android:value="GlideModule"/>-->
+
+        <!-- autoLayout START -->
+        <meta-data
+            android:name="design_width"
+            android:value="720"/>
+        <meta-data
+            android:name="design_height"
+            android:value="1280"/>
+        <!-- autoLayout END -->
+    </application>
+
+</manifest>

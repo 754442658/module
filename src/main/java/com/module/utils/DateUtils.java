@@ -1,0 +1,115 @@
+package com.module.utils;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+
+public class DateUtils {
+
+    /**
+     * 获取指定格式的日期
+     *
+     * @param format 日期格式 yyyy-MM-dd hh:mm:ss	HH代表24小时制，hh代表12小时制
+     * @param time
+     * @return
+     */
+    public static String getTime(String format, long time) {
+        SimpleDateFormat sdf = new SimpleDateFormat(format);
+        return sdf.format(new Date(time));
+    }
+
+    /**
+     * 时间转化为显示字符串
+     * 今天的显示时分
+     * 昨天的显示昨天
+     * 昨天之前的显示年月日
+     *
+     * @param timeStamp 单位为秒
+     */
+    public static String getTimeStr(long timeStamp) {
+        if (timeStamp == 0) return "";
+        Calendar inputTime = Calendar.getInstance();
+        inputTime.setTimeInMillis(timeStamp * 1000);
+        Date currenTimeZone = inputTime.getTime();
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, 23);
+        calendar.set(Calendar.MINUTE, 59);
+        if (calendar.before(inputTime)) {
+            //今天23:59在输入时间之前，解决一些时间误差，把当天时间显示到这里
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月dd日");
+            return sdf.format(currenTimeZone);
+        }
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+        if (calendar.before(inputTime)) {
+            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+            return sdf.format(currenTimeZone);
+        }
+        calendar.add(Calendar.DAY_OF_MONTH, -1);
+        if (calendar.before(inputTime)) {
+            return "昨天";
+        } else {
+            calendar.set(Calendar.DAY_OF_MONTH, 1);
+            calendar.set(Calendar.MONTH, Calendar.JANUARY);
+            if (calendar.before(inputTime)) {
+                SimpleDateFormat sdf = new SimpleDateFormat("M月d日");
+                return sdf.format(currenTimeZone);
+            } else {
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月dd日");
+                return sdf.format(currenTimeZone);
+
+            }
+
+        }
+
+    }
+
+    /**
+     * 时间转化为聊天界面显示字符串
+     * 今天的显示    时分
+     * 昨天的显示    昨天+时分
+     * 昨天之前的显示  年月日+时分
+     *
+     * @param timeStamp 单位为秒
+     */
+    public static String getChatTimeStr(long timeStamp) {
+        if (timeStamp == 0) return "";
+        Calendar inputTime = Calendar.getInstance();
+        inputTime.setTimeInMillis(timeStamp * 1000);
+        Date currenTimeZone = inputTime.getTime();
+        Calendar calendar = Calendar.getInstance();
+        if (!calendar.after(inputTime)) {
+            //当前时间在输入时间之前
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月dd日");
+            return sdf.format(currenTimeZone);
+        }
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+        if (calendar.before(inputTime)) {
+            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+            return sdf.format(currenTimeZone);
+        }
+        calendar.add(Calendar.DAY_OF_MONTH, -1);
+        if (calendar.before(inputTime)) {
+            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+            return "昨天 " + sdf.format(currenTimeZone);
+        } else {
+            calendar.set(Calendar.DAY_OF_MONTH, 1);
+            calendar.set(Calendar.MONTH, Calendar.JANUARY);
+            if (calendar.before(inputTime)) {
+                SimpleDateFormat sdf = new SimpleDateFormat("M月d日 HH:mm");
+                return sdf.format(currenTimeZone);
+            } else {
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月dd日" + " HH:mm");
+                return sdf.format(currenTimeZone);
+            }
+
+        }
+
+    }
+
+}
